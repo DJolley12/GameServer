@@ -32,6 +32,7 @@ namespace GameServer
         {
             TcpClient client = tcpListener.EndAcceptTcpClient(result);
             tcpListener.BeginAcceptTcpClient(new AsyncCallback(TCPConnectCallback), null);
+            Console.WriteLine($"Incoming connection from {client.Client .RemoteEndPoint}...");
             
             for (int i = 1; i <= MaxPlayers; i++)
             {
