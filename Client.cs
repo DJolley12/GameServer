@@ -20,7 +20,7 @@ namespace GameServer
         {
             public TcpClient Socket;
 
-            private readonly int Id { get; set; }
+            private readonly int Id;
             private NetworkStream stream { get; set; }
             private Packet receivedPacket { get; set; }
             private byte[] receiveBuffer { get; set; }
@@ -38,7 +38,7 @@ namespace GameServer
 
                 stream = Socket.GetStream();
 
-                receiveData = new Packet();
+                receivedPacket = new Packet();
                 receiveBuffer = new byte[DataBufferSize];
 
                 stream.BeginRead(receiveBuffer, 0, DataBufferSize, ReceiveCallback, null);
