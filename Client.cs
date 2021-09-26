@@ -75,7 +75,7 @@ namespace GameServer
                     byte[] data = new byte[byteLength];
                     Array.Copy(receiveBuffer, data, byteLength);
 
-                    // TODO: handle data 
+                    receivedPacket.Reset(HandleData(data));
                     stream.BeginRead(receiveBuffer, 0, DataBufferSize, ReceiveCallback, null);
                 }
                 catch (Exception ex)
@@ -83,6 +83,52 @@ namespace GameServer
                     Console.WriteLine($"Error receiving TCP data: {ex}");
                     // TODO: disconnect
                 }
+            }
+
+            private bool HandleData(byte[] _data)
+            {
+                int _packetLength = 0;
+
+                receivedPacket.SetBytes(_data);
+
+                if (receivedPacket.UnreadLength() >= 4)
+                {
+                    _packetLength = receivedPacket.ReadInt();
+                    if (_packetLength <= 0)
+                    {
+                        return true;
+                    }
+                }
+
+                while (_packetLength > 0 && _packetLength <= receivedPacket.UnreadLength())
+                {
+                    byte[] _packetBytes = receivedPacket.ReadBytes(_packetLength);
+                    ThreadManager.ExecuteOnMainThread(() =>
+                    {
+                        using (Packet _packet = new Packet(_packetBytes))
+                        {
+                            int _packetId = _packet.ReadInt();
+                            Server.packetHandlers[_packetId](Id, _packet);
+                        }
+                    });
+
+                    _packetLength = 0;
+                    if (receivedPacket.UnreadLength() >= 4)
+                    {
+                        _packetLength = receivedPacket.ReadInt();
+                        if (_packetLength <= 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if (_packetLength <= 1)
+                {
+                    return true;
+                }
+
+                return false;
             }
         }
     }
