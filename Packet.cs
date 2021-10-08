@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace GameServer
@@ -7,13 +8,17 @@ namespace GameServer
     /// <summary>Sent from server to client.</summary>
     public enum ServerPackets
     {
-        Welcome = 1
+        Welcome = 1,
+        SpawnPlayer,
+        PlayerPosition,
+        PlayerRotation,
     }
 
     /// <summary>Sent from client to server.</summary>
     public enum ClientPackets
     {
-        WelcomeReceived = 1
+        WelcomeReceived = 1,
+        PlayerMovement
     }
 
     public class Packet : IDisposable
@@ -156,6 +161,21 @@ namespace GameServer
         {
             Write(_value.Length); // Add the length of the string to the packet
             buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+        }
+
+        public void Write(Vector3 vector)
+        {
+            Write(vector.X);
+            Write(vector.Y);
+            Write(vector.Z);
+        }
+
+        public void Write(Quaternion quaternion)
+        {
+            Write(quaternion.X);
+            Write(quaternion.Y);
+            Write(quaternion.Z);
+            Write(quaternion.W);
         }
         #endregion
 
@@ -327,6 +347,16 @@ namespace GameServer
             {
                 throw new Exception("Could not read value of type 'string'!");
             }
+        }
+
+        public Vector3 ReadVector3(bool moveReadPos = true)
+        {
+            return new Vector3(ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos));
+        }
+
+        public Quaternion ReadQuaternion(bool moveReadPos = true)
+        {
+            return new Quaternion(ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos));
         }
         #endregion
 

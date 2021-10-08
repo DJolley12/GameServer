@@ -1,0 +1,15 @@
+{
+    "configurations": {
+        "launch - netcoredbg": {
+            "adapter": "netcoredbg",
+            "configuration": {
+                "request": "launch",
+                "program": "${workspaceRoot}/bin/Debug/net5.0/GameServer.dll",
+                "args": [],
+                "stopAtEntry": true,
+                "cwd": "${workspaceRoot}",
+                "env": {}
+            }
+        }
+    }
+}

@@ -1,21 +1,24 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Numerics;
 
 namespace GameServer
 {
     public class Client
     {
         public static int DataBufferSize = 4096;
-        public int Id;
-        public TCP Tcp;
+        public int Id { get; set; }
+        public Player CPlayer { get; set; }
+        public TCP Tcp { get; set; }
+        public UDP Udp { get; set; }
 
         public Client(int id)
         {
             Id = id;
             Tcp = new TCP(Id);
         }
-        
+
         public class TCP
         {
             public TcpClient Socket;
@@ -50,7 +53,7 @@ namespace GameServer
             {
                 try
                 {
-                    if (Socket != null) 
+                    if (Socket != null)
                     {
                         stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
                     }
@@ -60,10 +63,10 @@ namespace GameServer
                     Console.WriteLine($"Error sending data to player {Id} via TCP: {ex}");
                 }
             }
-                
+
             private void ReceiveCallback(IAsyncResult result)
             {
-                try 
+                try
                 {
                     int byteLength = stream.EndRead(result);
                     if (byteLength <= 0)
@@ -108,7 +111,7 @@ namespace GameServer
                         using (Packet _packet = new Packet(_packetBytes))
                         {
                             int _packetId = _packet.ReadInt();
-                            Server.packetHandlers[_packetId](Id, _packet);
+                            Server.PacketHandlers[_packetId](Id, _packet);
                         }
                     });
 
@@ -129,6 +132,66 @@ namespace GameServer
                 }
 
                 return false;
+            }
+        }
+
+        public class UDP
+        {
+            public IPEndPoint UdpEndPoint { get; set; }
+            private int id { get; set; }
+
+            public UDP(int udpId)
+            {
+                id = udpId;
+            }
+
+            public void Connect(IPEndPoint endPoint)
+            {
+                UdpEndPoint = endPoint;
+            }
+
+            public void SendData(Packet packet)
+            {
+                Server.SendUDPData(UdpEndPoint, packet);
+            }
+
+            public void HandleData(Packet packetData)
+            {
+                int packetLength = packetData.ReadInt();
+                byte[] packetBytes = packetData.ReadBytes(packetLength);
+
+                ThreadManager.ExecuteOnMainThread(() =>
+                {
+                    using (Packet packet = new Packet(packetBytes))
+                    {
+                        int packetId = packet.ReadInt();
+                        Server.PacketHandlers[packetId](id, packet);
+                    }
+                });
+            }
+        }
+
+        public void SendIntoGame(string playerName)
+        {
+            CPlayer = new Player(Id, playerName, new Vector3(0, 0, 0));
+
+            foreach (Client client in Server.Clients.Values)
+            {
+                if (client.CPlayer != null)
+                {
+                    if (client.Id != Id)
+                    {
+                        ServerSend.SpawnPlayer(Id, client.CPlayer);
+                    }
+                }
+            }
+
+            foreach (Client client in Server.Clients.Values)
+            {
+                if (client.CPlayer != null)
+                {
+                    ServerSend.SpawnPlayer(client.Id, CPlayer);
+                }
             }
         }
     }
