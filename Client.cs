@@ -17,6 +17,7 @@ namespace GameServer
         {
             Id = id;
             Tcp = new TCP(Id);
+            Udp = new UDP(Id);
         }
 
         public class TCP
