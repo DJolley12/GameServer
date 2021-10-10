@@ -22,7 +22,6 @@ namespace GameServer
         public static void PlayerPosition(int fromClient, Packet packet)
         {
             var position = packet.ReadVector3();
-            Console.WriteLine();
         }
 
         public static void PlayerMovement(int fromClient, Packet packet)
@@ -32,7 +31,6 @@ namespace GameServer
             for (int i = 0; i < inputs.Length; i++)
             {
                 inputs[i] = packet.ReadBool();
-                Console.WriteLine(inputs[i]);
             }
 
             var position = packet.ReadVector3();
@@ -40,8 +38,6 @@ namespace GameServer
             var rotation = packet.ReadQuaternion();
 
             Server.Clients[fromClient].CPlayer.SetInput(inputs, rotation, position);
-            Console.WriteLine(rotation);
-            Console.WriteLine(position);
         }
     }
 }

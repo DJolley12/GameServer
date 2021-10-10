@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Numerics;
 
 namespace GameServer
@@ -30,7 +27,14 @@ namespace GameServer
         {
             // TODO: Add SpaceShipControls script logic to add velocity
             // based on input
-            
+            var inputDirection = Vector2.Zero;
+            Move(inputDirection);
+        }
+
+        private void Move(Vector2 inputDirection)
+        {
+            ServerSend.PlayerPosition(this);
+            ServerSend.PlayerRotation(this);
         }
 
         public void SetInput(bool[] _inputs, Quaternion rotation, Vector3 position)

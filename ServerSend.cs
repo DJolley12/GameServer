@@ -83,5 +83,27 @@ namespace GameServer
                 SendTCPData(toClientId, packet);
             }
         }
+
+        public static void PlayerPosition(Player player)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.PlayerRotation))
+            {
+                packet.Write(player.Id);
+                packet.Write(player.Position);
+
+                SendUDPDataToAll(player.Id, packet);
+            }
+        }
+
+        public static void PlayerRotation(Player player)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.PlayerRotation))
+            {
+                packet.Write(player.Id);
+                packet.Write(player.Rotation);
+
+                SendUDPDataToAll(player.Id, packet);
+            }
+        }
     }
 }
