@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
@@ -10,6 +11,7 @@ namespace GameServer
         public static int DataBufferSize = 4096;
         public int Id { get; set; }
         public Player CPlayer { get; set; }
+        public List<IEnvironmentObject> EnvironmentObjects { get; set; }
         public TCP Tcp { get; set; }
         public UDP Udp { get; set; }
 

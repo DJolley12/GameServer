@@ -12,6 +12,8 @@ namespace GameServer
         SpawnPlayer,
         PlayerPosition,
         PlayerRotation,
+        EnvironmentObjectPosition,
+        EnvironmentObjectRotation
     }
 
     /// <summary>Sent from client to server.</summary>

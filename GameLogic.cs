@@ -12,6 +12,14 @@ namespace GameServer
                 }
             }
 
+            foreach (Client client in Server.Clients.Values)
+            {
+                foreach (var environmentObject in client.EnvironmentObjects)
+                {
+                    environmentObject.Update();
+                }
+            }
+
             ThreadManager.UpdateMain();
         }
     }

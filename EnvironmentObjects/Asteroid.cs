@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 
 namespace GameServer
@@ -20,12 +21,31 @@ namespace GameServer
             OwnerPosition = ownerPosition;
         }
 
+        public Asteroid(int id, float range, Vector3 ownerPosition, float maxTorque)
+        {
+            Id = id;
+            // TODO: find position based on player, and range ahead of direction, so 
+            // asteroid doesn't spawn on player or too close
+            var torque = GetRandom(maxTorque);
+            Rotation = new Quaternion();
+            // TODO: assign rotation based on torque
+            Velocity = new Vector3(GetRandom(range), GetRandom(range), 0);
+            OwnerPosition = ownerPosition;
+        }
+
         public void Update()
         {
+            ServerSend.EnvironmentObjectPosition(this);
         }
 
         private void Move()
         {
+        }
+
+        private float GetRandom(float range)
+        {
+            var random = new Random();
+            return random.Next((int)-range, (int)range);
         }
     }
 }

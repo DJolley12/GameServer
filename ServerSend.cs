@@ -105,5 +105,27 @@ namespace GameServer
                 SendUDPDataToAll(player.Id, packet);
             }
         }
+
+        public static void EnvironmentObjectPosition(IEnvironmentObject envObject)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.EnvironmentObjectPosition))
+            {
+                packet.Write(envObject.Id);
+                packet.Write(envObject.Position);
+
+                SendUDPDataToAll(packet);
+            }
+        }
+
+        public static void EnvironmentObjectRotation(IEnvironmentObject envObject)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.EnvironmentObjectRotation))
+            {
+                packet.Write(envObject.Id);
+                packet.Write(envObject.Position);
+
+                SendUDPDataToAll(packet);
+            }
+        }
     }
 }
