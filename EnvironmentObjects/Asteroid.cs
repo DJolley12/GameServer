@@ -35,7 +35,10 @@ namespace GameServer
 
         public void Update()
         {
+            Position += Velocity;
+            // TODO: rotate with torque
             ServerSend.EnvironmentObjectPosition(this);
+            ServerSend.EnvironmentObjectRotation(this);
         }
 
         private void Move()
