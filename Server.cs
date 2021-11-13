@@ -39,7 +39,7 @@ namespace GameServer
             TcpClient client = tcpListener.EndAcceptTcpClient(result);
             tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
             Console.WriteLine($"Incoming connection from {client.Client.RemoteEndPoint}...");
-            
+
             for (int i = 1; i <= MaxPlayers; i++)
             {
                 if (Clients[i].Tcp.Socket == null)
@@ -54,7 +54,7 @@ namespace GameServer
 
         private static void UDPReceiveCallback(IAsyncResult result)
         {
-            try 
+            try
             {
                 IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
                 byte[] data = udpListener.EndReceive(result, ref clientEndPoint);
@@ -67,7 +67,7 @@ namespace GameServer
 
                 using (Packet packet = new Packet(data))
                 {
-                    int clientId  = packet.ReadInt();
+                    int clientId = packet.ReadInt();
 
                     if (clientId <= 0)
                     {
@@ -118,6 +118,7 @@ namespace GameServer
             {
                 { (int)ClientPackets.WelcomeReceived, ServerHandle.WelcomeReceived },
                 { (int)ClientPackets.PlayerMovement, ServerHandle.PlayerMovement },
+                { (int)ClientPackets.EnvironmentObject, ServerHandle.EnvironmentObject },
             };
 
             Console.WriteLine("Initialized packets.");

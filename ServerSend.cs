@@ -127,5 +127,24 @@ namespace GameServer
                 SendUDPDataToAll(packet);
             }
         }
+
+        public static void EnvironmentObject(int toClientId, IEnvironmentObject envObject)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.EnvironmentObject))
+            {
+                packet.Write(envObject.Id);
+                packet.Write(envObject.OwnerId);
+                packet.Write(envObject.Position);
+                packet.Write(envObject.Rotation);
+                packet.Write(envObject.Velocity);
+                packet.Write(envObject.Torque);
+                packet.Write(envObject.GetType().ToString());
+
+                for (int i = 0; i < envObject.SubscribedClientIds.Length; i++)
+                {
+                    SendUDPData(envObject.SubscribedClientIds[i], packet);
+                }
+            }
+        }
     }
 }

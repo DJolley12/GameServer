@@ -6,6 +6,7 @@ namespace GameServer
     class Program
     {
         private static bool isRunning = false;
+        private static GameLogic gameLogic { get; set; }
 
         static void Main(string[] args)
         {

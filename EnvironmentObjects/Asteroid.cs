@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace GameServer
@@ -10,27 +11,17 @@ namespace GameServer
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
         public Vector3 Velocity { get; set; }
-        public Vector3 OwnerPosition { get; set; }
+        public float Torque { get; set; }
+        public int OwnerId { get; set; }
+        public List<int> SubscribedClientIds { get; set; }
 
-        public Asteroid(int id, Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 ownerPosition)
+        public Asteroid(int id,int ownerId, Vector3 position, Quaternion rotation, Vector3 velocity)
         {
             Id = id;
+            OwnerId = ownerId;
             Position = position;
             Rotation = rotation;
             Velocity = velocity;
-            OwnerPosition = ownerPosition;
-        }
-
-        public Asteroid(int id, float range, Vector3 ownerPosition, float maxTorque)
-        {
-            Id = id;
-            // TODO: find position based on player, and range ahead of direction, so 
-            // asteroid doesn't spawn on player or too close
-            var torque = GetRandom(maxTorque);
-            Rotation = new Quaternion();
-            // TODO: assign rotation based on torque
-            Velocity = new Vector3(GetRandom(range), GetRandom(range), 0);
-            OwnerPosition = ownerPosition;
         }
 
         public void Update()
@@ -39,6 +30,11 @@ namespace GameServer
             // TODO: rotate with torque
             ServerSend.EnvironmentObjectPosition(this);
             ServerSend.EnvironmentObjectRotation(this);
+
+            for (int i = 0; i < SubscribedClientIds.Count; i++)
+            {
+                ServerSend.EnvironmentObject(SubscribedClientIds[i], this);
+            }
         }
 
         private void Move()
@@ -49,6 +45,13 @@ namespace GameServer
         {
             var random = new Random();
             return random.Next((int)-range, (int)range);
+        }
+
+        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity)
+        {
+            Position = position;
+            Rotation = rotation;
+            Velocity = velocity;
         }
     }
 }

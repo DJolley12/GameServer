@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace GameServer
 {
@@ -38,6 +37,26 @@ namespace GameServer
             var rotation = packet.ReadQuaternion();
 
             Server.Clients[fromClient].CPlayer.SetInput(inputs, rotation, position);
+        }
+
+        public static void EnvironmentObject(int fromClient, Packet packet)
+        {
+            var objId = packet.ReadInt();
+            var position = packet.ReadVector3();
+            var rotation = packet.ReadQuaternion();
+            var velocity = packet.ReadVector3();
+            var torque = packet.ReadFloat();
+            var typeString = packet.ReadString();
+
+            if (objId < 0)
+            {
+                // TODO: add to EnvironmentManager list and send to clients
+                EnvironmentManager.AddNewEnvObject(objId, fromClient, typeString, position, rotation, velocity);
+            }
+            else
+            {
+                EnvironmentManager.EnvironmentObjects[objId].SetValues(position, rotation, velocity);
+            }
         }
     }
 }

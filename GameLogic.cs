@@ -4,21 +4,23 @@ namespace GameServer
     {
         public static void Update()
         {
+            Client prevClient = null;
             foreach (Client client in Server.Clients.Values)
             {
                 if (client.CPlayer != null)
                 {
                     client.CPlayer.Update();
+                    if (prevClient != null)
+                    {
+                        //compare prevClient/client pos
+                        ProximityManager.AddPlayerIfInProximity(client, prevClient);
+                    }
+
+                    prevClient = client;
                 }
             }
 
-            foreach (Client client in Server.Clients.Values)
-            {
-                foreach (var environmentObject in client.EnvironmentObjects)
-                {
-                    environmentObject.Update();
-                }
-            }
+            EnvironmentManager.Update();
 
             ThreadManager.UpdateMain();
         }
