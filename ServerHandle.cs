@@ -51,11 +51,11 @@ namespace GameServer
             if (objId < 0)
             {
                 // TODO: add to EnvironmentManager list and send to clients
-                EnvironmentManager.AddNewEnvObject(objId, fromClient, typeString, position, rotation, velocity);
+                EnvironmentManager.AddNewEnvObject(objId, fromClient, typeString, position, rotation, velocity, torque);
             }
             else
             {
-                EnvironmentManager.EnvironmentObjects[objId].SetValues(position, rotation, velocity);
+                EnvironmentManager.EnvironmentObjects[objId].SetValues(position, rotation, velocity, torque);
             }
         }
     }

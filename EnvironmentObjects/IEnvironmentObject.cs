@@ -15,7 +15,7 @@ namespace GameServer
         public List<int> SubscribedClientIds { get; set; }
 
         public void Update();
-        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity);
+        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity, float torque);
         private void Move()
         {
 

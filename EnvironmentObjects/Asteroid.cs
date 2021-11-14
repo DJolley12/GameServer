@@ -15,22 +15,18 @@ namespace GameServer
         public int OwnerId { get; set; }
         public List<int> SubscribedClientIds { get; set; }
 
-        public Asteroid(int id,int ownerId, Vector3 position, Quaternion rotation, Vector3 velocity)
+        public Asteroid(int id, int ownerId, Vector3 position, Quaternion rotation, Vector3 velocity, float torque)
         {
             Id = id;
             OwnerId = ownerId;
             Position = position;
             Rotation = rotation;
             Velocity = velocity;
+            Torque = torque;
         }
 
         public void Update()
         {
-            Position += Velocity;
-            // TODO: rotate with torque
-            ServerSend.EnvironmentObjectPosition(this);
-            ServerSend.EnvironmentObjectRotation(this);
-
             for (int i = 0; i < SubscribedClientIds.Count; i++)
             {
                 ServerSend.EnvironmentObject(SubscribedClientIds[i], this);
@@ -47,11 +43,12 @@ namespace GameServer
             return random.Next((int)-range, (int)range);
         }
 
-        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity)
+        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity, float torque)
         {
             Position = position;
             Rotation = rotation;
             Velocity = velocity;
+            Torque = torque;
         }
     }
 }

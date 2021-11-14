@@ -39,7 +39,7 @@ namespace GameServer
         {
             if (outOfScopeClientIds == null)
             {
-                outOfScopeClientIds = new int[] {};
+                outOfScopeClientIds = new List<int>();
             }
                 
             outOfScopeClientIds = outOfScopeClientIds.Append(playerId);
@@ -50,53 +50,101 @@ namespace GameServer
             //on players client that player does not own
         }
 
+        //public static void Update()
+        //{
+        //    for (int i = 0; i < EnvironmentObjects.Count; i++)
+        //    {
+        //        var environmentObject = EnvironmentObjects.ElementAt(i);
+        //        var ownerId = environmentObject.Value.OwnerId;
+        //        var ownerPosition = Server.Clients[ownerId].CPlayer.Position;
+        //        var ownerDiff = ownerPosition - environmentObject.Value.Position;
+
+        //        // Remove object if owner is out of scope, and no other players in scope
+        //        if (HelperMethods.ObjIsOutOfScope(ownerPosition, environmentObject.Value.Position, 1000))
+        //        {
+        //            environmentObject.Value.OwnerId = -1;
+
+        //            foreach (var client in Server.Clients.Values)
+        //            {
+        //                var diff = client.CPlayer.Position - environmentObject.Value.Position;
+        //                if (!HelperMethods.ObjIsOutOfScope(client.CPlayer.Position, environmentObject.Value.Position, 1000))
+        //                {
+        //                    environmentObject.Value.OwnerId = client.Id;
+        //                }
+        //                else 
+        //                {
+        //                    environmentObject.Value.SubscribedClientIds.Remove(client)
+        //                }
+        //            }
+
+        //            if (environmentObject.Value.OwnerId < 0)
+        //            {
+        //                // Remove, client side will handle out of scope on their own
+
+        //                EnvironmentObjects.Remove(environmentObject.Key);
+        //            }
+        //        }
+
+
+        //        //for (int j = 0; j < ProximityManager.GroupedPlayers.Count(); j++)
+        //        //{
+        //        //    var playerId = ProximityManager.GroupedPlayers.ElementAt(i).Id;
+        //        //    if (environmentObject.Value.SubscribedClientIds.Contains(playerId))
+        //        //    {
+        //        //        environmentObject.Value.SubscribedClientIds.Remove(playerId);
+        //        //    }
+        //        //}
+        //        environmentObject.Value.Update();
+        //    }
+        //}
+
         public static void Update()
         {
             for (int i = 0; i < EnvironmentObjects.Count; i++)
             {
                 var environmentObject = EnvironmentObjects.ElementAt(i);
-                var ownerId = environmentObject.Value.OwnerId;
-                var ownerPosition = Server.Clients[ownerId].CPlayer.Position;
-                var ownerDiff = ownerPosition - environmentObject.Value.Position;
-
-                if (HelperMethods.ObjIsOutOfScope(ownerPosition, environmentObject.Value.Position, 1000))
+                var clientCount = Server.Clients.Count();
+                for (int s = 0; s < clientCount; s++)
                 {
-                    environmentObject.Value.OwnerId = -1;
+                    var player = Server.Clients.ElementAt(s).Value.CPlayer;
 
-                    foreach (var client in Server.Clients.Values)
+                    // Need to remove out of scope items so server does not keep the in memory
+                    // indefinitely.
+                    if (HelperMethods.ObjIsOutOfScope(player.Position, environmentObject.Value.Position, 1000))
                     {
-                        var diff = client.CPlayer.Position - environmentObject.Value.Position;
-                        if (!HelperMethods.ObjIsOutOfScope(client.CPlayer.Position, environmentObject.Value.Position, 1000))
+                        // Object owner is out of scope, assign -1 to signal reassignment
+                        environmentObject.Value.SubscribedClientIds.Remove(player.Id);
+                        if (player.Id == environmentObject.Value.OwnerId)
                         {
-                            environmentObject.Value.OwnerId = client.Id;
+                            environmentObject.Value.OwnerId = -1;
                         }
                     }
-
-                    if (environmentObject.Value.OwnerId < 0)
+                    // Object is in scope, need to ensure player is sub'd
+                    else if (!environmentObject.Value.SubscribedClientIds.Contains(player.Id))
                     {
-                        // Remove, client side will handle out of scope on their own
-
-                        EnvironmentObjects.Remove(environmentObject.Key);
-                        // TODO: send destroy message to clients
+                        environmentObject.Value.SubscribedClientIds.Add(player.Id);
                     }
                 }
 
-                for (int j = 0; j < ProximityManager.GroupedPlayers.Count(); j++)
+                // Object no longer has subscribers, remove from dictionary
+                if (environmentObject.Value.SubscribedClientIds.Count() < 1)
                 {
-                    var playerId = ProximityManager.GroupedPlayers.ElementAt(i).Id;
-                    if (environmentObject.Value.SubscribedClientIds.Contains(playerId))
-                    {
-                        environmentObject.Value.SubscribedClientIds.Remove(playerId);
-                    }
+                    EnvironmentObjects.Remove(environmentObject.Key);
                 }
+                // Assign first subscriber as owner
+                else if (environmentObject.Value.OwnerId == -1)
+                {
+                    environmentObject.Value.OwnerId = environmentObject.Value.SubscribedClientIds[0];
+                }
+
                 environmentObject.Value.Update();
             }
         }
 
-        internal static void AddNewEnvObject(int objId, int ownerId, string typeString, Vector3 position, Quaternion rotation, Vector3 velocity)
+        internal static void AddNewEnvObject(int objId, int ownerId, string typeString, Vector3 position, Quaternion rotation, Vector3 velocity, float torque)
         {
             objId = EnvironmentManager.GetNewId();
-            var newObject = ObjectFactory.Instantiate(typeString, new object[] { objId, ownerId, position, rotation, velocity });
+            var newObject = ObjectFactory.Instantiate(typeString, new object[] { objId, ownerId, position, rotation, velocity, torque });
             EnvironmentObjects.Add(objId, (IEnvironmentObject)newObject);
         }
 

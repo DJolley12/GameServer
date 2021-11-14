@@ -140,7 +140,7 @@ namespace GameServer
                 packet.Write(envObject.Torque);
                 packet.Write(envObject.GetType().ToString());
 
-                for (int i = 0; i < envObject.SubscribedClientIds.Length; i++)
+                for (int i = 0; i < envObject.SubscribedClientIds.Count; i++)
                 {
                     SendUDPData(envObject.SubscribedClientIds[i], packet);
                 }

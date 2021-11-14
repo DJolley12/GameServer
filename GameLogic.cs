@@ -4,19 +4,19 @@ namespace GameServer
     {
         public static void Update()
         {
-            Client prevClient = null;
+            //Client prevClient = null;
             foreach (Client client in Server.Clients.Values)
             {
                 if (client.CPlayer != null)
                 {
                     client.CPlayer.Update();
-                    if (prevClient != null)
-                    {
-                        //compare prevClient/client pos
-                        ProximityManager.AddPlayerIfInProximity(client, prevClient);
-                    }
+                    //if (prevClient != null)
+                    //{
+                    //    //compare prevClient/client pos
+                    //    ProximityManager.AddPlayerIfInProximity(client, prevClient);
+                    //}
 
-                    prevClient = client;
+                    //prevClient = client;
                 }
             }
 
