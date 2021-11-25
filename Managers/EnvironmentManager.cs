@@ -100,6 +100,10 @@ namespace GameServer
 
         public static void Update()
         {
+            if (EnvironmentObjects == null)
+            {
+                EnvironmentObjects = new Dictionary<int, IEnvironmentObject>();
+            }
             for (int i = 0; i < EnvironmentObjects.Count; i++)
             {
                 var environmentObject = EnvironmentObjects.ElementAt(i);
