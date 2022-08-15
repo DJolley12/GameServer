@@ -137,7 +137,7 @@ namespace GameServer
                 packet.Write(envObject.Position);
                 packet.Write(envObject.Rotation);
                 packet.Write(envObject.Velocity);
-                packet.Write(envObject.Torque);
+                /* packet.Write(envObject.Torque); */
                 packet.Write(envObject.GetType().ToString());
 
                 for (int i = 0; i < envObject.SubscribedClientIds.Count; i++)
@@ -145,6 +145,11 @@ namespace GameServer
                     SendUDPData(envObject.SubscribedClientIds[i], packet);
                 }
             }
+        }
+
+        public static void Animation(int toClientId, Packet packet)
+        {
+            SendUDPData(toClientId, packet);
         }
     }
 }

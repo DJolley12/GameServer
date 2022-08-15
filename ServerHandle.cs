@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 namespace GameServer
 {
@@ -51,12 +50,17 @@ namespace GameServer
             if (objId < 0)
             {
                 // TODO: add to EnvironmentManager list and send to clients
-                EnvironmentManager.AddNewEnvObject(objId, fromClient, typeString, position, rotation, velocity, torque);
+                EnvironmentManager.AddNewEnvObject(objId, fromClient, position, rotation, velocity, torque, typeString);
             }
             else
             {
-                EnvironmentManager.EnvironmentObjects[objId].SetValues(position, rotation, velocity, torque);
+                EnvironmentManager.EnvironmentObjects[objId].SetValues(position, rotation, velocity, torque, typeString);
             }
+        }
+
+        public static void Animation(int fromClient, Packet packet)
+        {
+            ServerSend.Animation(fromClient, packet);
         }
     }
 }

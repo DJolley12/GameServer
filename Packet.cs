@@ -14,7 +14,8 @@ namespace GameServer
         PlayerRotation,
         EnvironmentObjectPosition,
         EnvironmentObjectRotation,
-        EnvironmentObject
+        EnvironmentObject,
+        Animation
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -22,7 +23,8 @@ namespace GameServer
     {
         WelcomeReceived = 1,
         PlayerMovement,
-        EnvironmentObject
+        EnvironmentObject,
+        Animation
     }
 
     public class Packet : IDisposable

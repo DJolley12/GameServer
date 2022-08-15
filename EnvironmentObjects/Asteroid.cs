@@ -12,6 +12,7 @@ namespace GameServer
         public Quaternion Rotation { get; set; }
         public Vector3 Velocity { get; set; }
         public float Torque { get; set; }
+        public string TypeString { get; set; }
         public int OwnerId { get; set; }
         public List<int> SubscribedClientIds { get; set; }
 
@@ -49,6 +50,7 @@ namespace GameServer
             Rotation = rotation;
             Velocity = velocity;
             Torque = torque;
+            TypeString = typeString;
         }
     }
 }

@@ -145,7 +145,7 @@ namespace GameServer
             }
         }
 
-        internal static void AddNewEnvObject(int objId, int ownerId, string typeString, Vector3 position, Quaternion rotation, Vector3 velocity, float torque)
+        internal static void AddNewEnvObject(int objId, int ownerId, Vector3 position, Quaternion rotation, Vector3 velocity, float torque, string typeString)
         {
             objId = EnvironmentManager.GetNewId();
             var newObject = ObjectFactory.Instantiate(typeString, new object[] { objId, ownerId, position, rotation, velocity, torque });
