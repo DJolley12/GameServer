@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 
 namespace GameServer
 {
@@ -147,9 +148,9 @@ namespace GameServer
             }
         }
 
-        public static void Animation(int toClientId, Packet packet)
+        public static void Animation(int exceptClient, Packet packet)
         {
-            SendUDPData(toClientId, packet);
+            SendUDPDataToAll(exceptClient, packet);
         }
     }
 }
