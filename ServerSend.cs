@@ -150,6 +150,7 @@ namespace GameServer
 
         public static void Animation(int exceptClient, Packet packet)
         {
+            packet.Write(exceptClient);
             SendUDPDataToAll(exceptClient, packet);
         }
     }

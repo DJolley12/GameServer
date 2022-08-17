@@ -44,7 +44,7 @@ namespace GameServer
             return random.Next((int)-range, (int)range);
         }
 
-        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity, float torque)
+        public void SetValues(Vector3 position, Quaternion rotation, Vector3 velocity, float torque, string typeString)
         {
             Position = position;
             Rotation = rotation;
